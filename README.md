@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pesquisa de Satisfação</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Biblioteca para gerar arquivo Excel (.xlsx) -->
+  <!-- Biblioteca para exportar relatórios em Excel (.xlsx) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen font-sans text-gray-800 relative pb-10">
 
-  <!-- CABEÇALHO COM BOTÃO DA ENGRENAGEM (ADMIN) -->
+  <!-- CABEÇALHO COM ENGRENAGEM (ADMIN) -->
   <header class="w-full bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm">
     <h1 class="text-xl font-bold text-gray-800">Pesquisa de Satisfação</h1>
     <button id="btn-open-admin-modal" title="Acesso Administrativo" class="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-gray-900 transition">
@@ -37,7 +37,7 @@
         <form id="participant-email-form" class="space-y-4">
           <input type="email" id="participant-email" required placeholder="seuemail@empresa.com.br"
                  class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-center text-lg">
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-lg transition">
+          <button type="submit" id="btn-start-survey" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-lg transition">
             Iniciar Pesquisa
           </button>
         </form>
@@ -51,7 +51,6 @@
         </div>
 
         <form id="survey-questions-form" class="space-y-8">
-          <!-- Q1 -->
           <div>
             <label class="block font-bold text-gray-800 text-lg mb-3">1. Na sua opinião, houve impacto negativo nas vendas por não receber mercadorias no sábado?</label>
             <div class="space-y-2">
@@ -61,7 +60,6 @@
             </div>
           </div>
 
-          <!-- Q2 -->
           <div>
             <label class="block font-bold text-gray-800 text-lg mb-3">2. Na sua opinião, não receber mercadorias no sábado facilitou a organização e a regularização das demandas da loja?</label>
             <div class="space-y-2">
@@ -71,7 +69,6 @@
             </div>
           </div>
 
-          <!-- Q3 -->
           <div>
             <label class="block font-bold text-gray-800 text-lg mb-3">3. Como você avalia a experiência de não receber mercadorias no sábado?</label>
             <div class="space-y-2">
@@ -82,7 +79,6 @@
             </div>
           </div>
 
-          <!-- Q4 -->
           <div>
             <label class="block font-bold text-gray-800 text-lg mb-3">4. Deixe sua opinião ou sugestão sobre a experiência de não receber mercadorias aos sábados.</label>
             <textarea name="q4" rows="4" class="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Sua opinião ou sugestão..."></textarea>
@@ -94,14 +90,12 @@
         </form>
       </div>
 
-      <!-- ETAPA 3: MENSAGENS E FEEDBACK -->
-      <div id="feedback-step" class="hidden text-center py-10 space-y-4">
-        <!-- Renderizado via JavaScript -->
-      </div>
+      <!-- ETAPA 3: MENSAGENS DE FEEDBACK -->
+      <div id="feedback-step" class="hidden text-center py-10 space-y-4"></div>
 
     </div>
 
-    <!-- PAINEL ADMINISTRATIVO (INICIALMENTE OCULTO) -->
+    <!-- PAINEL ADMINISTRATIVO -->
     <div id="admin-panel" class="hidden space-y-8 bg-white p-6 sm:p-10 rounded-2xl shadow-md">
       <div class="flex justify-between items-center border-b pb-4">
         <div>
@@ -118,7 +112,7 @@
         <h3 class="text-lg font-bold text-blue-900">Criar Nova Pesquisa</h3>
         <form id="create-survey-form" class="flex flex-col sm:flex-row gap-4">
           <input type="text" id="survey-title-input" required placeholder="Ex: Pesquisa de Recebimento - Sábados" class="flex-grow p-3 border rounded-xl focus:outline-none">
-          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition">
+          <button type="submit" id="btn-create-survey" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition">
             Criar Pesquisa
           </button>
         </form>
@@ -127,9 +121,7 @@
       <!-- LISTA DE PESQUISAS -->
       <div class="space-y-6">
         <h3 class="text-xl font-bold text-gray-900">Pesquisas Cadastradas</h3>
-        <div id="admin-surveys-list" class="space-y-6">
-          <!-- Conteúdo gerado dinamicamente -->
-        </div>
+        <div id="admin-surveys-list" class="space-y-6"></div>
       </div>
     </div>
 
@@ -161,19 +153,21 @@
     </div>
   </div>
 
-  <!-- LÓGICA DO FIREBASE E APLICAÇÃO -->
+  <!-- SCRIPT FIREBASE COMPLETO -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+    // Configuração oficial fornecida
     const firebaseConfig = {
       apiKey: "AIzaSyAbXWJo0L3fZeK1itLhyFvs03xeTXcn0gg",
       authDomain: "pesquisa-cdcb3.firebaseapp.com",
+      databaseURL: "https://pesquisa-cdcb3-default-rtdb.firebaseio.com",
       projectId: "pesquisa-cdcb3",
       storageBucket: "pesquisa-cdcb3.firebasestorage.app",
       messagingSenderId: "1026729731641",
-      appId: "1:1026729731641:web:f2528b1854afaa188d4fe8",
-      measurementId: "G-RX6J1XZFHH"
+      appId: "1:1026729731641:web:6dc2af32a152c2808d4fe8",
+      measurementId: "G-ZX3Y1VBSXN"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -190,7 +184,7 @@
     const adminPanel = document.getElementById("admin-panel");
     const adminLoginModal = document.getElementById("admin-login-modal");
 
-    // Modal de Login Admin
+    // Abrir/Fechar Modal Admin
     document.getElementById("btn-open-admin-modal").addEventListener("click", () => {
       adminLoginModal.classList.remove("hidden");
     });
@@ -199,7 +193,7 @@
       adminLoginModal.classList.add("hidden");
     });
 
-    // Login Admin com Usuário 'PESQUISA' e Senha 'DPSP2026'
+    // Login Admin
     document.getElementById("admin-login-form").addEventListener("submit", (e) => {
       e.preventDefault();
       const user = document.getElementById("admin-user").value.trim().toUpperCase();
@@ -222,42 +216,51 @@
       participantContainer.classList.remove("hidden");
     });
 
-    // PARTICIPANTE: Digita o E-mail e Inicia
+    // Início da Pesquisa pelo Participante
     document.getElementById("participant-email-form").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const btn = document.getElementById("btn-start-survey");
+      btn.disabled = true;
+      btn.textContent = "Verificando...";
+
       currentParticipantEmail = document.getElementById("participant-email").value.trim().toLowerCase();
-      if (!currentParticipantEmail) return;
 
-      // Buscar pesquisa ativa
-      const q = query(collection(db, "pesquisas"), where("status", "==", "ativa"));
-      const snap = await getDocs(q);
+      try {
+        const q = query(collection(db, "pesquisas"), where("status", "==", "ativa"));
+        const snap = await getDocs(q);
 
-      emailStep.classList.add("hidden");
+        emailStep.classList.add("hidden");
 
-      if (snap.empty) {
-        showFeedback("Nenhuma Pesquisa Ativa", "Não há nenhuma pesquisa aberta para respostas no momento.");
-        return;
+        if (snap.empty) {
+          showFeedback("Nenhuma Pesquisa Ativa", "Não há nenhuma pesquisa aberta no momento.");
+          return;
+        }
+
+        activeSurvey = { id: snap.docs[0].id, ...snap.docs[0].data() };
+
+        // Verificar trava de 1 resposta por e-mail
+        const respQ = query(
+          collection(db, "respostas"),
+          where("pesquisa_id", "==", activeSurvey.id),
+          where("email", "==", currentParticipantEmail)
+        );
+        const respSnap = await getDocs(respQ);
+
+        if (!respSnap.empty) {
+          showFeedback("Resposta já Registrada!", `O e-mail <b>${currentParticipantEmail}</b> já respondeu a esta pesquisa. É permitida apenas uma resposta por e-mail.`);
+          return;
+        }
+
+        document.getElementById("survey-title-display").textContent = activeSurvey.titulo;
+        document.getElementById("user-email-display").textContent = currentParticipantEmail;
+        surveyStep.classList.remove("hidden");
+      } catch (err) {
+        alert("Erro ao conectar no banco de dados: " + err.message);
+        emailStep.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Iniciar Pesquisa";
       }
-
-      activeSurvey = { id: snap.docs[0].id, ...snap.docs[0].data() };
-
-      // Verificar se este e-mail já respondeu à pesquisa ativa
-      const respQ = query(
-        collection(db, "respostas"),
-        where("pesquisa_id", "==", activeSurvey.id),
-        where("email", "==", currentParticipantEmail)
-      );
-      const respSnap = await getDocs(respQ);
-
-      if (!respSnap.empty) {
-        showFeedback("Resposta já Registrada!", `O e-mail <b>${currentParticipantEmail}</b> já enviou uma resposta para a pesquisa ativa. É permitida apenas uma resposta por e-mail.`);
-        return;
-      }
-
-      // Exibir o formulário da pesquisa
-      document.getElementById("survey-title-display").textContent = activeSurvey.titulo;
-      document.getElementById("user-email-display").textContent = currentParticipantEmail;
-      surveyStep.classList.remove("hidden");
     });
 
     // Envio das Respostas pelo Participante
@@ -265,7 +268,7 @@
       e.preventDefault();
       const btn = document.getElementById("btn-submit-survey");
       btn.disabled = true;
-      btn.textContent = "Gravando resposta...";
+      btn.textContent = "Gravando...";
 
       const formData = new FormData(e.target);
       const now = new Date();
@@ -283,7 +286,7 @@
         });
 
         surveyStep.classList.add("hidden");
-        showFeedback("Muito Obrigado!", "Sua opinião foi registrada com sucesso.");
+        showFeedback("Muito Obrigado!", "Sua resposta foi salva com sucesso.");
       } catch (err) {
         alert("Erro ao gravar resposta: " + err.message);
         btn.disabled = false;
@@ -299,111 +302,130 @@
       feedbackStep.classList.remove("hidden");
     }
 
-    // --- PAINEL ADMINISTRATIVO (AÇÕES) ---
+    // --- AÇÕES ADMINISTRATIVAS ---
 
-    // Criar Nova Pesquisa com Data
+    // Criar Pesquisa
     document.getElementById("create-survey-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const input = document.getElementById("survey-title-input");
       const title = input.value.trim();
-      const now = new Date();
-      const dataFormatada = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+      const btn = document.getElementById("btn-create-survey");
 
-      await addDoc(collection(db, "pesquisas"), {
-        titulo: title,
-        data_criacao: dataFormatada,
-        status: "ativa"
-      });
+      if (!title) return;
 
-      input.value = "";
-      loadAdminData();
+      btn.disabled = true;
+      btn.textContent = "Criando...";
+
+      try {
+        const now = new Date();
+        const dataFormatada = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+
+        await addDoc(collection(db, "pesquisas"), {
+          titulo: title,
+          data_criacao: dataFormatada,
+          status: "ativa"
+        });
+
+        input.value = "";
+        alert("Pesquisa criada com sucesso!");
+        await loadAdminData();
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao criar pesquisa: " + err.message + "\n\nVerifique se as Regras do Firestore Database estão configuradas com permissão de leitura/escrita.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Criar Pesquisa";
+      }
     });
 
-    // Carregar Dados das Pesquisas e Respostas no Admin
+    // Carregar Lista no Admin
     async function loadAdminData() {
       const container = document.getElementById("admin-surveys-list");
       container.innerHTML = "<p class='text-gray-500'>Carregando dados...</p>";
 
-      const pSnap = await getDocs(collection(db, "pesquisas"));
-      const rSnap = await getDocs(collection(db, "respostas"));
+      try {
+        const pSnap = await getDocs(collection(db, "pesquisas"));
+        const rSnap = await getDocs(collection(db, "respostas"));
 
-      const respostas = rSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const respostas = rSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      if (pSnap.empty) {
-        container.innerHTML = "<p class='text-gray-500'>Nenhuma pesquisa criada até o momento.</p>";
-        return;
-      }
+        if (pSnap.empty) {
+          container.innerHTML = "<p class='text-gray-500'>Nenhuma pesquisa cadastrada até o momento.</p>";
+          return;
+        }
 
-      container.innerHTML = "";
+        container.innerHTML = "";
 
-      pSnap.docs.forEach(docSnap => {
-        const p = { id: docSnap.id, ...docSnap.data() };
-        const pRespostas = respostas.filter(r => r.pesquisa_id === p.id);
+        pSnap.docs.forEach(docSnap => {
+          const p = { id: docSnap.id, ...docSnap.data() };
+          const pRespostas = respostas.filter(r => r.pesquisa_id === p.id);
 
-        const card = document.createElement("div");
-        card.className = "border border-gray-200 rounded-xl p-5 bg-white space-y-4 shadow-sm";
-        card.innerHTML = `
-          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b pb-3">
-            <div>
-              <h4 class="font-bold text-lg text-gray-900">${p.titulo}</h4>
-              <p class="text-xs text-gray-500">Criada em: ${p.data_criacao} | Status: <span class="font-bold uppercase ${p.status === 'ativa' ? 'text-green-600' : 'text-red-600'}">${p.status}</span></p>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <button onclick="downloadExcel('${p.id}', '${p.titulo}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
-                Baixar Excel (${pRespostas.length})
-              </button>
-              ${p.status === 'ativa' ? `
-                <button onclick="closeSurvey('${p.id}')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
-                  Encerrar Pesquisa
+          const card = document.createElement("div");
+          card.className = "border border-gray-200 rounded-xl p-5 bg-white space-y-4 shadow-sm";
+          card.innerHTML = `
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b pb-3">
+              <div>
+                <h4 class="font-bold text-lg text-gray-900">${p.titulo}</h4>
+                <p class="text-xs text-gray-500">Criada em: ${p.data_criacao} | Status: <span class="font-bold uppercase ${p.status === 'ativa' ? 'text-green-600' : 'text-red-600'}">${p.status}</span></p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="downloadExcel('${p.id}', '${p.titulo}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
+                  Baixar Excel (${pRespostas.length})
                 </button>
-              ` : ''}
-              <button onclick="deleteSurvey('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
-                Excluir Pesquisa Completa
-              </button>
+                ${p.status === 'ativa' ? `
+                  <button onclick="closeSurvey('${p.id}')" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
+                    Encerrar Pesquisa
+                  </button>
+                ` : ''}
+                <button onclick="deleteSurvey('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg transition">
+                  Excluir Pesquisa Completa
+                </button>
+              </div>
             </div>
-          </div>
 
-          <!-- Tabela com lixeira individual para cada resposta -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-gray-600">
-              <thead class="bg-gray-100 text-gray-700 uppercase">
-                <tr>
-                  <th class="p-2">Data/Hora</th>
-                  <th class="p-2">E-mail</th>
-                  <th class="p-2">Q1</th>
-                  <th class="p-2">Q2</th>
-                  <th class="p-2">Q3</th>
-                  <th class="p-2">Q4 (Opinião)</th>
-                  <th class="p-2 text-center">Excluir</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${pRespostas.length > 0 ? pRespostas.map(r => `
-                  <tr class="border-b hover:bg-gray-50">
-                    <td class="p-2 whitespace-nowrap">${r.data_hora}</td>
-                    <td class="p-2">${r.email}</td>
-                    <td class="p-2">${r.q1}</td>
-                    <td class="p-2">${r.q2}</td>
-                    <td class="p-2">${r.q3}</td>
-                    <td class="p-2 max-w-xs truncate" title="${r.q4}">${r.q4}</td>
-                    <td class="p-2 text-center">
-                      <button onclick="deleteResponse('${r.id}')" title="Excluir Resposta Individual" class="text-red-500 hover:text-red-700 font-bold p-1">
-                        🗑️
-                      </button>
-                    </td>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left text-gray-600">
+                <thead class="bg-gray-100 text-gray-700 uppercase">
+                  <tr>
+                    <th class="p-2">Data/Hora</th>
+                    <th class="p-2">E-mail</th>
+                    <th class="p-2">Q1</th>
+                    <th class="p-2">Q2</th>
+                    <th class="p-2">Q3</th>
+                    <th class="p-2">Q4 (Opinião)</th>
+                    <th class="p-2 text-center">Excluir</th>
                   </tr>
-                `).join('') : `
-                  <tr><td colspan="7" class="p-3 text-center text-gray-400">Nenhuma resposta registrada ainda.</td></tr>
-                `}
-              </tbody>
-            </table>
-          </div>
-        `;
-        container.appendChild(card);
-      });
+                </thead>
+                <tbody>
+                  ${pRespostas.length > 0 ? pRespostas.map(r => `
+                    <tr class="border-b hover:bg-gray-50">
+                      <td class="p-2 whitespace-nowrap">${r.data_hora}</td>
+                      <td class="p-2">${r.email}</td>
+                      <td class="p-2">${r.q1}</td>
+                      <td class="p-2">${r.q2}</td>
+                      <td class="p-2">${r.q3}</td>
+                      <td class="p-2 max-w-xs truncate" title="${r.q4}">${r.q4}</td>
+                      <td class="p-2 text-center">
+                        <button onclick="deleteResponse('${r.id}')" title="Excluir Resposta" class="text-red-500 hover:text-red-700 font-bold p-1">
+                          🗑️
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('') : `
+                    <tr><td colspan="7" class="p-3 text-center text-gray-400">Nenhuma resposta registrada.</td></tr>
+                  `}
+                </tbody>
+              </table>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        container.innerHTML = `<p class='text-red-500'>Erro ao carregar dados: ${err.message}</p>`;
+      }
     }
 
-    // Métodos Globais para Ações Administrativas
+    // Métodos Globais no Admin
     window.closeSurvey = async (id) => {
       if(confirm("Deseja encerrar esta pesquisa? Ninguém mais poderá responder.")) {
         await updateDoc(doc(db, "pesquisas", id), { status: "encerrada" });
@@ -412,7 +434,7 @@
     };
 
     window.deleteSurvey = async (id) => {
-      if(confirm("Tem certeza que deseja excluir a pesquisa completa? Todas as respostas associadas serão apagadas.")) {
+      if(confirm("Tem certeza que deseja excluir a pesquisa completa? Todas as respostas serão apagadas.")) {
         await deleteDoc(doc(db, "pesquisas", id));
         loadAdminData();
       }
