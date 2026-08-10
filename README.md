@@ -1,4 +1,3 @@
-
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -114,7 +113,6 @@
 
         <form id="survey-questions-form" class="space-y-8">
           
-          <!-- Q1 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               1. Na sua opinião, houve impacto negativo nas vendas por não receber mercadorias no sábado?
@@ -135,7 +133,6 @@
             </div>
           </div>
 
-          <!-- Q2 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               2. Na sua opinião, não receber mercadorias no sábado facilitou a organização e a regularização das demandas da loja?
@@ -156,7 +153,6 @@
             </div>
           </div>
 
-          <!-- Q3 (CORRIGIDO PARA NÃO SOBREPOR NO CELULAR) -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               3. Como você avalia a experiência de não receber mercadorias no sábado?
@@ -181,7 +177,6 @@
             </div>
           </div>
 
-          <!-- Q4 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               4. Deixe sua opinião ou sugestão sobre a experiência de não receber mercadorias aos sábados.
@@ -238,9 +233,20 @@
         </form>
       </div>
 
-      <!-- LISTA DE PESQUISAS -->
+      <!-- LISTA DE PESQUISAS E FILTRO -->
       <div class="space-y-6">
-        <h3 class="text-xl font-bold text-white">Pesquisas Cadastradas</h3>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h3 class="text-xl font-bold text-white">Pesquisas Cadastradas</h3>
+          
+          <!-- FILTRO NA MESMA LINHA -->
+          <div class="flex items-center gap-2">
+            <label for="survey-filter" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Filtrar:</label>
+            <select id="survey-filter" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm rounded-xl px-3 py-2 focus:border-blue-500 focus:outline-none">
+              <option value="all">Ver Todas</option>
+            </select>
+          </div>
+        </div>
+
         <div id="admin-surveys-list" class="space-y-8"></div>
       </div>
     </div>
@@ -308,6 +314,8 @@
     let currentParticipantEmail = "";
     let activeSurvey = null;
     let chartInstances = {};
+    let cachePesquisas = [];
+    let cacheRespostas = [];
 
     const participantContainer = document.getElementById("participant-container");
     const emailStep = document.getElementById("email-step");
@@ -315,6 +323,7 @@
     const feedbackStep = document.getElementById("feedback-step");
     const adminPanel = document.getElementById("admin-panel");
     const adminLoginModal = document.getElementById("admin-login-modal");
+    const surveyFilterSelect = document.getElementById("survey-filter");
 
     document.getElementById("btn-open-admin-modal").addEventListener("click", () => {
       adminLoginModal.classList.remove("hidden");
@@ -432,7 +441,7 @@
       feedbackStep.classList.remove("hidden");
     }
 
-    // PAINEL ADMINISTRATIVO E GRÁFICOS
+    // 1. REGRA: BLOQUEAR CRIAR NOVA PESQUISA SE JÁ HOUVER UMA ATIVA
     document.getElementById("create-survey-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const input = document.getElementById("survey-title-input");
@@ -442,9 +451,21 @@
       if (!title) return;
 
       btn.disabled = true;
-      btn.textContent = "Criando...";
+      btn.textContent = "Verificando...";
 
       try {
+        // Verificar se já existe pesquisa com status 'ativa'
+        const qActive = query(collection(db, "pesquisas"), where("status", "==", "ativa"));
+        const activeSnap = await getDocs(qActive);
+
+        if (!activeSnap.empty) {
+          alert("⚠️ AÇÃO BLOQUEADA!\n\nJá existe uma pesquisa ATIVA no momento. Você precisa encerrar a pesquisa ativa antes de criar uma nova.");
+          btn.disabled = false;
+          btn.textContent = "Criar Pesquisa";
+          return;
+        }
+
+        btn.textContent = "Criando...";
         const now = new Date();
         const dataFormatada = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
 
@@ -465,130 +486,167 @@
       }
     });
 
+    // 2. REGRA: CARREGAR DADOS E POPULAR O FILTRO
     async function loadAdminData() {
       const container = document.getElementById("admin-surveys-list");
       container.innerHTML = "<p class='text-slate-400 text-sm animate-pulse'>Carregando dados e gerando gráficos...</p>";
-
-      Object.keys(chartInstances).forEach(key => chartInstances[key].destroy());
-      chartInstances = {};
 
       try {
         const pSnap = await getDocs(collection(db, "pesquisas"));
         const rSnap = await getDocs(collection(db, "respostas"));
 
-        const respostas = rSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        cachePesquisas = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        cacheRespostas = rSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-        if (pSnap.empty) {
-          container.innerHTML = "<p class='text-slate-400 text-sm'>Nenhuma pesquisa cadastrada até o momento.</p>";
-          return;
+        const currentVal = surveyFilterSelect.value || "all";
+
+        // Preencher o Select do Filtro
+        surveyFilterSelect.innerHTML = `<option value="all">Ver Todas (${cachePesquisas.length})</option>`;
+        cachePesquisas.forEach(p => {
+          const opt = document.createElement("option");
+          opt.value = p.id;
+          opt.textContent = `${p.titulo} (${p.status.toUpperCase()})`;
+          surveyFilterSelect.appendChild(opt);
+        });
+
+        if ([...surveyFilterSelect.options].some(o => o.value === currentVal)) {
+          surveyFilterSelect.value = currentVal;
+        } else {
+          surveyFilterSelect.value = "all";
         }
 
-        container.innerHTML = "";
-
-        pSnap.docs.forEach(docSnap => {
-          const p = { id: docSnap.id, ...docSnap.data() };
-          const pRespostas = respostas.filter(r => r.pesquisa_id === p.id);
-
-          const card = document.createElement("div");
-          card.className = "border border-slate-700/80 rounded-2xl p-5 sm:p-6 bg-slate-900/80 space-y-6 shadow-xl";
-          
-          card.innerHTML = `
-            <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
-              <div>
-                <h4 class="font-bold text-xl text-white">${p.titulo}</h4>
-                <p class="text-xs text-slate-400 mt-1">
-                  Criada em: ${p.data_criacao} | 
-                  Status: <span class="font-bold uppercase ${p.status === 'ativa' ? 'text-emerald-400' : 'text-rose-400'}">${p.status}</span> |
-                  Total Respostas: <span class="font-bold text-blue-400">${pRespostas.length}</span>
-                </p>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <button onclick="downloadExcel('${p.id}', '${p.titulo}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5">
-                  📥 Excel (${pRespostas.length})
-                </button>
-                ${p.status === 'ativa' ? `
-                  <button onclick="closeSurvey('${p.id}')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all">
-                    Encerrar
-                  </button>
-                ` : ''}
-                <button onclick="deleteSurvey('${p.id}')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all">
-                  Excluir
-                </button>
-              </div>
-            </div>
-
-            ${pRespostas.length > 0 ? `
-              <div class="bg-slate-950/50 p-4 sm:p-6 rounded-2xl border border-slate-800/80 space-y-4">
-                <h5 class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Dashboard de Desempenho</h5>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
-                    <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q1 - Impacto Vendas</p>
-                    <div class="w-full h-44 flex items-center justify-center">
-                      <canvas id="chart-q1-${p.id}"></canvas>
-                    </div>
-                  </div>
-                  <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
-                    <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q2 - Organização Loja</p>
-                    <div class="w-full h-44 flex items-center justify-center">
-                      <canvas id="chart-q2-${p.id}"></canvas>
-                    </div>
-                  </div>
-                  <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
-                    <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q3 - Avaliação Geral</p>
-                    <div class="w-full h-44 flex items-center justify-center">
-                      <canvas id="chart-q3-${p.id}"></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ` : ''}
-
-            <div class="overflow-x-auto rounded-xl border border-slate-800">
-              <table class="w-full text-xs text-left text-slate-300">
-                <thead class="bg-slate-800/90 text-slate-400 uppercase tracking-wider font-semibold">
-                  <tr>
-                    <th class="p-3">Data/Hora</th>
-                    <th class="p-3">E-mail</th>
-                    <th class="p-3">Q1</th>
-                    <th class="p-3">Q2</th>
-                    <th class="p-3">Q3</th>
-                    <th class="p-3">Q4 (Opinião)</th>
-                    <th class="p-3 text-center">Ações</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800/60">
-                  ${pRespostas.length > 0 ? pRespostas.map(r => `
-                    <tr class="hover:bg-slate-800/40 transition-colors">
-                      <td class="p-3 whitespace-nowrap text-slate-400">${r.data_hora}</td>
-                      <td class="p-3 font-medium text-slate-200">${r.email}</td>
-                      <td class="p-3">${r.q1}</td>
-                      <td class="p-3">${r.q2}</td>
-                      <td class="p-3">${r.q3}</td>
-                      <td class="p-3 max-w-xs truncate" title="${r.q4}">${r.q4 || '-'}</td>
-                      <td class="p-3 text-center">
-                        <button onclick="deleteResponse('${r.id}')" title="Excluir Resposta" class="text-rose-400 hover:text-rose-300 font-bold p-1 transition">
-                          🗑️
-                        </button>
-                      </td>
-                    </tr>
-                  `).join('') : `
-                    <tr><td colspan="7" class="p-4 text-center text-slate-500">Nenhuma resposta registrada.</td></tr>
-                  `}
-                </tbody>
-              </table>
-            </div>
-          `;
-
-          container.appendChild(card);
-
-          if (pRespostas.length > 0) {
-            renderCharts(p.id, pRespostas);
-          }
-        });
+        renderAdminSurveysList();
 
       } catch (err) {
         container.innerHTML = `<p class='text-rose-400 text-sm'>Erro ao carregar dados: ${err.message}</p>`;
       }
+    }
+
+    // EVENTO DE MUDANÇA NO FILTRO
+    surveyFilterSelect.addEventListener("change", renderAdminSurveysList);
+
+    function renderAdminSurveysList() {
+      const container = document.getElementById("admin-surveys-list");
+      const selectedFilter = surveyFilterSelect.value;
+
+      Object.keys(chartInstances).forEach(key => chartInstances[key].destroy());
+      chartInstances = {};
+
+      if (cachePesquisas.length === 0) {
+        container.innerHTML = "<p class='text-slate-400 text-sm'>Nenhuma pesquisa cadastrada até o momento.</p>";
+        return;
+      }
+
+      const pesquisasExibir = selectedFilter === "all" 
+        ? cachePesquisas 
+        : cachePesquisas.filter(p => p.id === selectedFilter);
+
+      if (pesquisasExibir.length === 0) {
+        container.innerHTML = "<p class='text-slate-400 text-sm'>Nenhuma pesquisa encontrada para este filtro.</p>";
+        return;
+      }
+
+      container.innerHTML = "";
+
+      pesquisasExibir.forEach(p => {
+        const pRespostas = cacheRespostas.filter(r => r.pesquisa_id === p.id);
+
+        const card = document.createElement("div");
+        card.className = "border border-slate-700/80 rounded-2xl p-5 sm:p-6 bg-slate-900/80 space-y-6 shadow-xl";
+        
+        card.innerHTML = `
+          <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
+            <div>
+              <h4 class="font-bold text-xl text-white">${p.titulo}</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                Criada em: ${p.data_criacao} | 
+                Status: <span class="font-bold uppercase ${p.status === 'ativa' ? 'text-emerald-400' : 'text-rose-400'}">${p.status}</span> |
+                Total Respostas: <span class="font-bold text-blue-400">${pRespostas.length}</span>
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <button onclick="downloadExcel('${p.id}', '${p.titulo}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5">
+                📥 Excel (${pRespostas.length})
+              </button>
+              ${p.status === 'ativa' ? `
+                <button onclick="closeSurvey('${p.id}')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all">
+                  Encerrar
+                </button>
+              ` : ''}
+              <button onclick="deleteSurvey('${p.id}')" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all">
+                Excluir
+              </button>
+            </div>
+          </div>
+
+          ${pRespostas.length > 0 ? `
+            <div class="bg-slate-950/50 p-4 sm:p-6 rounded-2xl border border-slate-800/80 space-y-4">
+              <h5 class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Dashboard de Desempenho</h5>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
+                  <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q1 - Impacto Vendas</p>
+                  <div class="w-full h-44 flex items-center justify-center">
+                    <canvas id="chart-q1-${p.id}"></canvas>
+                  </div>
+                </div>
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
+                  <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q2 - Organização Loja</p>
+                  <div class="w-full h-44 flex items-center justify-center">
+                    <canvas id="chart-q2-${p.id}"></canvas>
+                  </div>
+                </div>
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
+                  <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q3 - Avaliação Geral</p>
+                  <div class="w-full h-44 flex items-center justify-center">
+                    <canvas id="chart-q3-${p.id}"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-xs text-left text-slate-300">
+              <thead class="bg-slate-800/90 text-slate-400 uppercase tracking-wider font-semibold">
+                <tr>
+                  <th class="p-3">Data/Hora</th>
+                  <th class="p-3">E-mail</th>
+                  <th class="p-3">Q1</th>
+                  <th class="p-3">Q2</th>
+                  <th class="p-3">Q3</th>
+                  <th class="p-3">Q4 (Opinião)</th>
+                  <th class="p-3 text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                ${pRespostas.length > 0 ? pRespostas.map(r => `
+                  <tr class="hover:bg-slate-800/40 transition-colors">
+                    <td class="p-3 whitespace-nowrap text-slate-400">${r.data_hora}</td>
+                    <td class="p-3 font-medium text-slate-200">${r.email}</td>
+                    <td class="p-3">${r.q1}</td>
+                    <td class="p-3">${r.q2}</td>
+                    <td class="p-3">${r.q3}</td>
+                    <td class="p-3 max-w-xs truncate" title="${r.q4}">${r.q4 || '-'}</td>
+                    <td class="p-3 text-center">
+                      <button onclick="deleteResponse('${r.id}')" title="Excluir Resposta" class="text-rose-400 hover:text-rose-300 font-bold p-1 transition">
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                `).join('') : `
+                  <tr><td colspan="7" class="p-4 text-center text-slate-500">Nenhuma resposta registrada.</td></tr>
+                `}
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        container.appendChild(card);
+
+        if (pRespostas.length > 0) {
+          renderCharts(p.id, pRespostas);
+        }
+      });
     }
 
     function renderCharts(surveyId, respostas) {
