@@ -114,76 +114,80 @@
 
         <form id="survey-questions-form" class="space-y-8">
           
+          <!-- Q1 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               1. Na sua opinião, houve impacto negativo nas vendas por não receber mercadorias no sábado?
             </label>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q1" value="Sim" required class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Sim</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q1" value="Sim" required class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Sim</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q1" value="Não" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Não</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q1" value="Não" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Não</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q1" value="Não sei informar" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Não sei informar</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q1" value="Não sei informar" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Não sei informar</span>
               </label>
             </div>
           </div>
 
+          <!-- Q2 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               2. Na sua opinião, não receber mercadorias no sábado facilitou a organização e a regularização das demandas da loja?
             </label>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q2" value="Sim" required class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Sim</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q2" value="Sim" required class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Sim</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q2" value="Não" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Não</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q2" value="Não" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Não</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q2" value="Parcialmente" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Parcialmente</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q2" value="Parcialmente" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Parcialmente</span>
               </label>
             </div>
           </div>
 
+          <!-- Q3 (CORRIGIDO PARA NÃO SOBREPOR NO CELULAR) -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               3. Como você avalia a experiência de não receber mercadorias no sábado?
             </label>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q3" value="Excelente" required class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Excelente</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q3" value="Excelente" required class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Excelente</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q3" value="Boa" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Boa</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q3" value="Boa" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Boa</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q3" value="Normal" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Normal</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q3" value="Normal" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Normal</span>
               </label>
-              <label class="flex items-center gap-3 p-4 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
-                <input type="radio" name="q3" value="Ruim" class="w-5 h-5 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
-                <span class="font-medium text-slate-200">Ruim</span>
+              <label class="flex items-center gap-3 p-3.5 bg-slate-800/80 border border-slate-700 rounded-xl hover:border-blue-500/50 hover:bg-slate-800 cursor-pointer transition-all">
+                <input type="radio" name="q3" value="Ruim" class="w-5 h-5 shrink-0 text-blue-600 focus:ring-blue-500 bg-slate-900 border-slate-700">
+                <span class="font-medium text-slate-200 text-sm sm:text-base">Ruim</span>
               </label>
             </div>
           </div>
 
+          <!-- Q4 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               4. Deixe sua opinião ou sugestão sobre a experiência de não receber mercadorias aos sábados.
             </label>
             <textarea name="q4" rows="4" 
-                      class="w-full p-4 bg-slate-800/80 border border-slate-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none text-slate-100 placeholder-slate-500 transition-all" 
+                      class="w-full p-4 bg-slate-800/80 border border-slate-700 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none text-slate-100 placeholder-slate-500 transition-all text-sm sm:text-base" 
                       placeholder="Escreva seus comentários aqui..."></textarea>
           </div>
 
@@ -298,15 +302,12 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // =========================================================================
-    // CREDENCIAIS DO ADMINISTRADOR
-    // =========================================================================
     const ADMIN_USER = "admin";
     const ADMIN_PASS = "dpsp2026";
 
     let currentParticipantEmail = "";
     let activeSurvey = null;
-    let chartInstances = {}; // Armazena instâncias de gráficos ativas para limpeza
+    let chartInstances = {};
 
     const participantContainer = document.getElementById("participant-container");
     const emailStep = document.getElementById("email-step");
@@ -323,7 +324,6 @@
       adminLoginModal.classList.add("hidden");
     });
 
-    // VALIDAÇÃO POR USUÁRIO E SENHA
     document.getElementById("admin-login-form").addEventListener("submit", (e) => {
       e.preventDefault();
       const inputUser = document.getElementById("admin-user-input").value.trim();
@@ -432,7 +432,7 @@
       feedbackStep.classList.remove("hidden");
     }
 
-    // --- PAINEL ADMINISTRATIVO E GRÁFICOS ---
+    // PAINEL ADMINISTRATIVO E GRÁFICOS
     document.getElementById("create-survey-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const input = document.getElementById("survey-title-input");
@@ -469,7 +469,6 @@
       const container = document.getElementById("admin-surveys-list");
       container.innerHTML = "<p class='text-slate-400 text-sm animate-pulse'>Carregando dados e gerando gráficos...</p>";
 
-      // Destruir gráficos anteriores
       Object.keys(chartInstances).forEach(key => chartInstances[key].destroy());
       chartInstances = {};
 
@@ -518,7 +517,6 @@
               </div>
             </div>
 
-            <!-- SEÇÃO DE GRÁFICOS VISUAIS -->
             ${pRespostas.length > 0 ? `
               <div class="bg-slate-950/50 p-4 sm:p-6 rounded-2xl border border-slate-800/80 space-y-4">
                 <h5 class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Dashboard de Desempenho</h5>
@@ -545,7 +543,6 @@
               </div>
             ` : ''}
 
-            <!-- TABELA DE RESPOSTAS -->
             <div class="overflow-x-auto rounded-xl border border-slate-800">
               <table class="w-full text-xs text-left text-slate-300">
                 <thead class="bg-slate-800/90 text-slate-400 uppercase tracking-wider font-semibold">
@@ -584,7 +581,6 @@
 
           container.appendChild(card);
 
-          // RENDERIZAR GRÁFICOS APÓS INSERIR O CARD NO DOM
           if (pRespostas.length > 0) {
             renderCharts(p.id, pRespostas);
           }
@@ -595,7 +591,6 @@
       }
     }
 
-    // FUNÇÃO PARA GERAR OS GRÁFICOS COM CHART.JS
     function renderCharts(surveyId, respostas) {
       const chartConfigBase = {
         responsive: true,
@@ -608,11 +603,8 @@
         }
       };
 
-      // Q1: Sim / Não / Não sei informar
       const q1Counts = { 'Sim': 0, 'Não': 0, 'Não sei informar': 0 };
-      // Q2: Sim / Não / Parcialmente
       const q2Counts = { 'Sim': 0, 'Não': 0, 'Parcialmente': 0 };
-      // Q3: Excelente / Boa / Normal / Ruim
       const q3Counts = { 'Excelente': 0, 'Boa': 0, 'Normal': 0, 'Ruim': 0 };
 
       respostas.forEach(r => {
@@ -621,7 +613,6 @@
         if (q3Counts[r.q3] !== undefined) q3Counts[r.q3]++;
       });
 
-      // Gráfico Q1 (Doughnut)
       const ctxQ1 = document.getElementById(`chart-q1-${surveyId}`);
       if (ctxQ1) {
         chartInstances[`q1-${surveyId}`] = new Chart(ctxQ1, {
@@ -638,7 +629,6 @@
         });
       }
 
-      // Gráfico Q2 (Doughnut)
       const ctxQ2 = document.getElementById(`chart-q2-${surveyId}`);
       if (ctxQ2) {
         chartInstances[`q2-${surveyId}`] = new Chart(ctxQ2, {
@@ -655,7 +645,6 @@
         });
       }
 
-      // Gráfico Q3 (Bar)
       const ctxQ3 = document.getElementById(`chart-q3-${surveyId}`);
       if (ctxQ3) {
         chartInstances[`q3-${surveyId}`] = new Chart(ctxQ3, {
