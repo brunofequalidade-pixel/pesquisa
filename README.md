@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -12,10 +13,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- SheetJS para Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Chart.js para Gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     body { font-family: 'Inter', sans-serif; }
-    /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -31,7 +33,7 @@
     <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-cyan-600/15 rounded-full blur-3xl"></div>
   </div>
 
-  <!-- CABEÇALHO FIXO PREMIUM -->
+  <!-- CABEÇALHO FIXO -->
   <header class="sticky top-0 z-40 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-8 py-4 transition-all">
     <div class="max-w-7xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
@@ -59,13 +61,13 @@
     </div>
   </header>
 
-  <!-- CONTEÚDO PRINCIPAL (TELA CHEIA RESPONSIVA) -->
+  <!-- CONTEÚDO PRINCIPAL -->
   <main class="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col justify-center">
 
     <!-- ÁREA DO PARTICIPANTE -->
     <div id="participant-container" class="w-full max-w-3xl mx-auto">
       
-      <!-- ETAPA 1: SOLICITAR E-MAIL DO PARTICIPANTE -->
+      <!-- ETAPA 1: SOLICITAR E-MAIL -->
       <div id="email-step" class="bg-slate-800/60 backdrop-blur-xl border border-slate-700/60 p-6 sm:p-12 rounded-3xl shadow-2xl space-y-8 transition-all">
         <div class="text-center space-y-3">
           <span class="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold rounded-full uppercase tracking-wider">
@@ -112,7 +114,6 @@
 
         <form id="survey-questions-form" class="space-y-8">
           
-          <!-- Pergunta 1 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               1. Na sua opinião, houve impacto negativo nas vendas por não receber mercadorias no sábado?
@@ -133,7 +134,6 @@
             </div>
           </div>
 
-          <!-- Pergunta 2 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               2. Na sua opinião, não receber mercadorias no sábado facilitou a organização e a regularização das demandas da loja?
@@ -154,7 +154,6 @@
             </div>
           </div>
 
-          <!-- Pergunta 3 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               3. Como você avalia a experiência de não receber mercadorias no sábado?
@@ -179,7 +178,6 @@
             </div>
           </div>
 
-          <!-- Pergunta 4 -->
           <div class="bg-slate-900/50 p-5 sm:p-6 rounded-2xl border border-slate-700/50 space-y-4">
             <label class="block font-semibold text-slate-100 text-base sm:text-lg">
               4. Deixe sua opinião ou sugestão sobre a experiência de não receber mercadorias aos sábados.
@@ -196,12 +194,12 @@
         </form>
       </div>
 
-      <!-- ETAPA 3: MENSAGENS DE FEEDBACK -->
+      <!-- ETAPA 3: FEEDBACK -->
       <div id="feedback-step" class="hidden bg-slate-800/60 backdrop-blur-xl border border-slate-700/60 p-8 sm:p-12 rounded-3xl shadow-2xl text-center space-y-4"></div>
 
     </div>
 
-    <!-- PAINEL ADMINISTRATIVO (COMPLETO E AMPLO PARA NOTEBOOK/TELA CHEIA) -->
+    <!-- PAINEL ADMINISTRATIVO -->
     <div id="admin-panel" class="hidden w-full space-y-8 bg-slate-800/60 backdrop-blur-xl border border-slate-700/60 p-6 sm:p-10 rounded-3xl shadow-2xl">
       
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-700/80 pb-6">
@@ -210,7 +208,7 @@
             Área Restrita
           </span>
           <h2 class="text-2xl sm:text-3xl font-bold text-white mt-2">Painel Administrativo</h2>
-          <p class="text-slate-400 text-sm">Gestão de Pesquisas e Métricas de Respostas</p>
+          <p class="text-slate-400 text-sm">Gestão de Pesquisas e Dashboard Visual</p>
         </div>
         <button id="btn-exit-admin" 
                 class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold px-5 py-2.5 rounded-xl text-sm transition-all duration-200 border border-slate-600">
@@ -239,18 +237,17 @@
       <!-- LISTA DE PESQUISAS -->
       <div class="space-y-6">
         <h3 class="text-xl font-bold text-white">Pesquisas Cadastradas</h3>
-        <div id="admin-surveys-list" class="space-y-6"></div>
+        <div id="admin-surveys-list" class="space-y-8"></div>
       </div>
     </div>
 
   </main>
 
-  <!-- FOOTER SUTIL -->
   <footer class="relative z-10 w-full text-center py-4 border-t border-slate-800/60 text-xs text-slate-500">
     © 2026 Sistema de Pesquisas de Satisfação • CD Bahia DPSP
   </footer>
 
-  <!-- MODAL DE LOGIN ADMIN -->
+  <!-- MODAL DE LOGIN ADMIN (USUÁRIO E SENHA) -->
   <div id="admin-login-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 z-50">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 sm:p-8 shadow-2xl space-y-6 relative animate-in fade-in zoom-in duration-200">
       
@@ -262,27 +259,27 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-white">Acesso Restrito</h3>
-        <p class="text-xs text-slate-400">Informe suas credenciais de Administrador</p>
+        <h3 class="text-xl font-bold text-white">Acesso Administrativo</h3>
+        <p class="text-xs text-slate-400">Informe suas credenciais de acesso</p>
       </div>
 
       <form id="admin-login-form" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Usuário</label>
-          <input type="text" id="admin-user" required class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-slate-100 text-sm">
+          <input type="text" id="admin-user-input" required placeholder="admin" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-slate-100 text-sm">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Senha</label>
-          <input type="password" id="admin-pass" required class="w-full p-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-slate-100 text-sm">
+          <input type="password" id="admin-pass-input" required placeholder="••••••••" class="w-full p-3.5 bg-slate-800 border border-slate-700 rounded-xl focus:border-blue-500 focus:outline-none text-slate-100 text-sm">
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition duration-200 shadow-lg shadow-blue-600/30 text-sm">
-          Entrar no Admin
+        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl transition duration-200 shadow-lg shadow-blue-600/30 text-sm">
+          Entrar no Painel
         </button>
       </form>
     </div>
   </div>
 
-  <!-- SCRIPT FIREBASE -->
+  <!-- SCRIPT FIREBASE E LÓGICA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -301,8 +298,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // =========================================================================
+    // CREDENCIAIS DO ADMINISTRADOR
+    // =========================================================================
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "dpsp2026";
+
     let currentParticipantEmail = "";
     let activeSurvey = null;
+    let chartInstances = {}; // Armazena instâncias de gráficos ativas para limpeza
 
     const participantContainer = document.getElementById("participant-container");
     const emailStep = document.getElementById("email-step");
@@ -319,20 +323,21 @@
       adminLoginModal.classList.add("hidden");
     });
 
+    // VALIDAÇÃO POR USUÁRIO E SENHA
     document.getElementById("admin-login-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      const user = document.getElementById("admin-user").value.trim().toUpperCase();
-      const pass = document.getElementById("admin-pass").value.trim();
+      const inputUser = document.getElementById("admin-user-input").value.trim();
+      const inputPass = document.getElementById("admin-pass-input").value.trim();
 
-      if (user === "PESQUISA" && pass === "DPSP2026") {
+      if (inputUser === ADMIN_USER && inputPass === ADMIN_PASS) {
         adminLoginModal.classList.add("hidden");
         participantContainer.classList.add("hidden");
         adminPanel.classList.remove("hidden");
-        document.getElementById("admin-user").value = "";
-        document.getElementById("admin-pass").value = "";
+        document.getElementById("admin-user-input").value = "";
+        document.getElementById("admin-pass-input").value = "";
         loadAdminData();
       } else {
-        alert("Usuário ou Senha incorretos!");
+        alert("Credenciais incorretas! Verifique o Usuário e a Senha.");
       }
     });
 
@@ -370,7 +375,7 @@
         const respSnap = await getDocs(respQ);
 
         if (!respSnap.empty) {
-          showFeedback("Resposta já Registrada!", `O e-mail <b class="text-blue-400">${currentParticipantEmail}</b> já respondeu a esta pesquisa. É permitida apenas uma resposta por e-mail.`);
+          showFeedback("Resposta já Registrada!", `O e-mail <b class="text-blue-400">${currentParticipantEmail}</b> já respondeu a esta pesquisa.`);
           return;
         }
 
@@ -427,7 +432,7 @@
       feedbackStep.classList.remove("hidden");
     }
 
-    // --- AÇÕES ADMINISTRATIVAS ---
+    // --- PAINEL ADMINISTRATIVO E GRÁFICOS ---
     document.getElementById("create-survey-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const input = document.getElementById("survey-title-input");
@@ -453,7 +458,6 @@
         alert("Pesquisa criada com sucesso!");
         await loadAdminData();
       } catch (err) {
-        console.error(err);
         alert("Erro ao criar pesquisa: " + err.message);
       } finally {
         btn.disabled = false;
@@ -463,7 +467,11 @@
 
     async function loadAdminData() {
       const container = document.getElementById("admin-surveys-list");
-      container.innerHTML = "<p class='text-slate-400 text-sm animate-pulse'>Carregando dados...</p>";
+      container.innerHTML = "<p class='text-slate-400 text-sm animate-pulse'>Carregando dados e gerando gráficos...</p>";
+
+      // Destruir gráficos anteriores
+      Object.keys(chartInstances).forEach(key => chartInstances[key].destroy());
+      chartInstances = {};
 
       try {
         const pSnap = await getDocs(collection(db, "pesquisas"));
@@ -483,19 +491,21 @@
           const pRespostas = respostas.filter(r => r.pesquisa_id === p.id);
 
           const card = document.createElement("div");
-          card.className = "border border-slate-700/80 rounded-2xl p-5 sm:p-6 bg-slate-900/80 space-y-4 shadow-xl";
+          card.className = "border border-slate-700/80 rounded-2xl p-5 sm:p-6 bg-slate-900/80 space-y-6 shadow-xl";
+          
           card.innerHTML = `
             <div class="flex flex-col lg:flex-row justify-between lg:items-center gap-4 border-b border-slate-800 pb-4">
               <div>
-                <h4 class="font-bold text-lg text-white">${p.titulo}</h4>
+                <h4 class="font-bold text-xl text-white">${p.titulo}</h4>
                 <p class="text-xs text-slate-400 mt-1">
                   Criada em: ${p.data_criacao} | 
-                  Status: <span class="font-bold uppercase ${p.status === 'ativa' ? 'text-emerald-400' : 'text-rose-400'}">${p.status}</span>
+                  Status: <span class="font-bold uppercase ${p.status === 'ativa' ? 'text-emerald-400' : 'text-rose-400'}">${p.status}</span> |
+                  Total Respostas: <span class="font-bold text-blue-400">${pRespostas.length}</span>
                 </p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button onclick="downloadExcel('${p.id}', '${p.titulo}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all flex items-center gap-1.5">
-                  📥 Baixar Excel (${pRespostas.length})
+                  📥 Excel (${pRespostas.length})
                 </button>
                 ${p.status === 'ativa' ? `
                   <button onclick="closeSurvey('${p.id}')" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3.5 py-2 rounded-lg transition-all">
@@ -508,6 +518,34 @@
               </div>
             </div>
 
+            <!-- SEÇÃO DE GRÁFICOS VISUAIS -->
+            ${pRespostas.length > 0 ? `
+              <div class="bg-slate-950/50 p-4 sm:p-6 rounded-2xl border border-slate-800/80 space-y-4">
+                <h5 class="text-sm font-bold text-indigo-400 uppercase tracking-wider">Dashboard de Desempenho</h5>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
+                    <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q1 - Impacto Vendas</p>
+                    <div class="w-full h-44 flex items-center justify-center">
+                      <canvas id="chart-q1-${p.id}"></canvas>
+                    </div>
+                  </div>
+                  <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
+                    <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q2 - Organização Loja</p>
+                    <div class="w-full h-44 flex items-center justify-center">
+                      <canvas id="chart-q2-${p.id}"></canvas>
+                    </div>
+                  </div>
+                  <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 flex flex-col items-center">
+                    <p class="text-xs font-semibold text-slate-300 text-center mb-2">Q3 - Avaliação Geral</p>
+                    <div class="w-full h-44 flex items-center justify-center">
+                      <canvas id="chart-q3-${p.id}"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- TABELA DE RESPOSTAS -->
             <div class="overflow-x-auto rounded-xl border border-slate-800">
               <table class="w-full text-xs text-left text-slate-300">
                 <thead class="bg-slate-800/90 text-slate-400 uppercase tracking-wider font-semibold">
@@ -543,10 +581,102 @@
               </table>
             </div>
           `;
+
           container.appendChild(card);
+
+          // RENDERIZAR GRÁFICOS APÓS INSERIR O CARD NO DOM
+          if (pRespostas.length > 0) {
+            renderCharts(p.id, pRespostas);
+          }
         });
+
       } catch (err) {
         container.innerHTML = `<p class='text-rose-400 text-sm'>Erro ao carregar dados: ${err.message}</p>`;
+      }
+    }
+
+    // FUNÇÃO PARA GERAR OS GRÁFICOS COM CHART.JS
+    function renderCharts(surveyId, respostas) {
+      const chartConfigBase = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#94a3b8', font: { size: 10 } }
+          }
+        }
+      };
+
+      // Q1: Sim / Não / Não sei informar
+      const q1Counts = { 'Sim': 0, 'Não': 0, 'Não sei informar': 0 };
+      // Q2: Sim / Não / Parcialmente
+      const q2Counts = { 'Sim': 0, 'Não': 0, 'Parcialmente': 0 };
+      // Q3: Excelente / Boa / Normal / Ruim
+      const q3Counts = { 'Excelente': 0, 'Boa': 0, 'Normal': 0, 'Ruim': 0 };
+
+      respostas.forEach(r => {
+        if (q1Counts[r.q1] !== undefined) q1Counts[r.q1]++;
+        if (q2Counts[r.q2] !== undefined) q2Counts[r.q2]++;
+        if (q3Counts[r.q3] !== undefined) q3Counts[r.q3]++;
+      });
+
+      // Gráfico Q1 (Doughnut)
+      const ctxQ1 = document.getElementById(`chart-q1-${surveyId}`);
+      if (ctxQ1) {
+        chartInstances[`q1-${surveyId}`] = new Chart(ctxQ1, {
+          type: 'doughnut',
+          data: {
+            labels: ['Sim', 'Não', 'Não sei'],
+            datasets: [{
+              data: [q1Counts['Sim'], q1Counts['Não'], q1Counts['Não sei informar']],
+              backgroundColor: ['#ef4444', '#10b981', '#64748b'],
+              borderWidth: 0
+            }]
+          },
+          options: chartConfigBase
+        });
+      }
+
+      // Gráfico Q2 (Doughnut)
+      const ctxQ2 = document.getElementById(`chart-q2-${surveyId}`);
+      if (ctxQ2) {
+        chartInstances[`q2-${surveyId}`] = new Chart(ctxQ2, {
+          type: 'doughnut',
+          data: {
+            labels: ['Sim', 'Não', 'Parcialmente'],
+            datasets: [{
+              data: [q2Counts['Sim'], q2Counts['Não'], q2Counts['Parcialmente']],
+              backgroundColor: ['#10b981', '#ef4444', '#f59e0b'],
+              borderWidth: 0
+            }]
+          },
+          options: chartConfigBase
+        });
+      }
+
+      // Gráfico Q3 (Bar)
+      const ctxQ3 = document.getElementById(`chart-q3-${surveyId}`);
+      if (ctxQ3) {
+        chartInstances[`q3-${surveyId}`] = new Chart(ctxQ3, {
+          type: 'bar',
+          data: {
+            labels: ['Exc', 'Boa', 'Norm', 'Ruim'],
+            datasets: [{
+              data: [q3Counts['Excelente'], q3Counts['Boa'], q3Counts['Normal'], q3Counts['Ruim']],
+              backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
+              borderRadius: 6
+            }]
+          },
+          options: {
+            ...chartConfigBase,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: { ticks: { color: '#64748b', precision: 0 }, grid: { color: '#334155' } },
+              x: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } }
+            }
+          }
+        });
       }
     }
 
