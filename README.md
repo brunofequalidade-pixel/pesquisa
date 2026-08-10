@@ -86,7 +86,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
               </svg>
             </div>
-            <input type="email" id="participant-email" required placeholder="seuemail@empresa.com.br"
+            <input type="email" id="participant-email" required placeholder="seuemail@dpsp.com.br"
                    class="w-full pl-12 pr-4 py-4 bg-slate-900/80 border border-slate-700 focus:border-blue-500 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:outline-none text-slate-100 placeholder-slate-500 text-base sm:text-lg transition-all">
           </div>
           <button type="submit" id="btn-start-survey" 
